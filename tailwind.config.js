@@ -1,0 +1,48 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brand: '#2563eb',
+        'brand-hover': '#1d4ed8',
+        'brand-light': '#eff6ff',
+        'brand-border': '#bfdbfe',
+        'sidebar-bg': '#0f172a',
+        'sidebar-hover': 'rgba(255,255,255,0.05)',
+        'sidebar-active': 'rgba(37,99,235,0.18)',
+        'sidebar-text': '#94a3b8',
+        'sidebar-active-text': '#93c5fd',
+        'sidebar-muted': '#475569',
+        'sidebar-divider': 'rgba(255,255,255,0.06)',
+        'page-bg': '#f8fafc',
+        'card-bg': '#ffffff',
+        border: '#e2e8f0',
+        'row-divider': '#f1f5f9',
+        'text-primary': '#0f172a',
+        'text-secondary': '#1e293b',
+        'text-muted': '#64748b',
+        'text-hint': '#94a3b8',
+        'success-bg': '#f0fdf4',
+        'success-text': '#16a34a',
+        'success-border': '#bbf7d0',
+        'warning-bg': '#fffbeb',
+        'warning-text': '#d97706',
+        'warning-border': '#fde68a',
+        'danger-bg': '#fef2f2',
+        'danger-text': '#dc2626',
+        'danger-border': '#fecaca',
+        'info-bg': '#eff6ff',
+        'info-text': '#2563eb',
+        'info-border': '#bfdbfe',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}

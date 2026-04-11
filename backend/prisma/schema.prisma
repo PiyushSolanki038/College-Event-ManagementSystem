@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  profile   Profile?
+}
+
+model Profile {
+  id            Int            @id @default(autoincrement())
+  userId        Int            @unique
+  name          String
+  role          String         @default("student")
+  status        String         @default("active")
+  emailVerified Boolean        @default(false)
+  enrollmentNo  String?
+  department    String?
+  joinedAt      DateTime       @default(now())
+  events        Event[]        @relation("OrganizerEvents")
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+}
+
+model Venue {
+  id         Int     @id @default(autoincrement())
+  name       String  @unique
+  location   String
+  capacity   Int
+  facilities String?
+  events     Event[]
+}
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  events Event[]
+}
+
+model Event {
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String         @db.Text
+  date            DateTime
+  time            String
+  venueId         Int
+  categoryId      Int
+  organizerId     Int
+  status          String         @default("pending")
+  maxCapacity     Int
+  price           Float          @default(0)
+  targetAudience  String?
+  contactEmail    String?
+  contactPhone    String?
+  websiteUrl      String?
+  registeredCount Int            @default(0)
+  bannerImage     String?        @db.Text
+  rejectionReason String?
+  certificateEnabled Boolean     @default(false)
+  createdAt       DateTime       @default(now())
+  category        Category       @relation(fields: [categoryId], references: [id])
+  organizer       Profile        @relation("OrganizerEvents", fields: [organizerId], references: [id])
+  venue           Venue          @relation(fields: [venueId], references: [id])
+  registrations   Registration[]
+}
+
+model Registration {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  eventId        Int
+  registeredAt   DateTime @default(now())
+  attended       Boolean  @default(false)
+  seatNumber     String?
+  attendeeName   String?
+  attendeeGender String?
+  attendeeContact String?
+  attendeeEmail  String?
+  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user           Profile  @relation(fields: [userId], references: [id], onUpdate: NoAction)
+
+  @@unique([userId, eventId])
+}
