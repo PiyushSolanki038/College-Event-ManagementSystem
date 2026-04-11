@@ -53,7 +53,16 @@ Built for performance, scalability, and robust data residency.
 
 ---
 
-## 5. Event Lifecycle
+## 5. Repository & Documentation
+Explore the code, deployment guides, and technical specifications.
+
+- **GitHub Repository:** [College-Event-ManagementSystem](https://github.com/PiyushSolanki038/College-Event-ManagementSystem.git)
+- **Documentation:** Built-in PRD and modular component guides.
+- **Open Source:** Designed for institutional scalability.
+
+---
+
+## 6. Event Lifecycle
 1. **Draft:** Created by the Organizer, preparing details, media, and venues.
 2. **Pending:** Submitted to the Institutional Admin for rigorous review.
 3. **Approved:** Pushed live to the Student Gallery for active registrations.
