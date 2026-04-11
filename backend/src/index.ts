@@ -22,7 +22,7 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'institutional_governance_secret_2026';
 
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000'].filter(Boolean);
+const allowedOrigins = [process.env.FRONTEND_URL, 'https://college-event-management-system-pul.vercel.app', 'http://localhost:5173', 'http://localhost:3000'].filter(Boolean);
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
