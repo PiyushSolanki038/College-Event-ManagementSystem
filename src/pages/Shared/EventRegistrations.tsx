@@ -55,10 +55,10 @@ const EventRegistrations: React.FC = () => {
     const token = localStorage.getItem('college_auth_token');
     try {
       const [regRes, eventRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/events/${eventId}/registrations`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/registrations`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`http://localhost:5000/api/events`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -77,7 +77,7 @@ const EventRegistrations: React.FC = () => {
   const handleSeatUpdate = async (regId: number) => {
     const token = localStorage.getItem('college_auth_token');
     try {
-      await fetch(`http://localhost:5000/api/registrations/${regId}/seat`, {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/registrations/${regId}/seat`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ seatNumber: seatValue })

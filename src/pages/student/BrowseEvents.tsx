@@ -424,7 +424,7 @@ export default function BrowseEvents() {
               setCertLoading(true);
               try {
                 const token = localStorage.getItem('college_auth_token');
-                const response = await fetch('http://localhost:5000/api/certificates/generate', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/generate`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                   body: JSON.stringify({ eventId: certEventId, ...certForm })

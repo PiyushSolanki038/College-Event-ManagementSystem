@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui-custom/Toast';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 
 export type UserRole = 'student' | 'organizer' | 'admin';
 
@@ -162,3 +162,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

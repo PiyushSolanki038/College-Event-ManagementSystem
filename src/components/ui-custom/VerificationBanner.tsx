@@ -23,7 +23,7 @@ export default function VerificationBanner() {
     setOtpError('');
     try {
       const token = localStorage.getItem('college_auth_token');
-      const response = await fetch('http://localhost:5000/api/auth/send-verification', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/send-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
       });
@@ -46,7 +46,7 @@ export default function VerificationBanner() {
     setOtpError('');
     try {
       const token = localStorage.getItem('college_auth_token');
-      const response = await fetch('http://localhost:5000/api/auth/verify-email', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ otp })

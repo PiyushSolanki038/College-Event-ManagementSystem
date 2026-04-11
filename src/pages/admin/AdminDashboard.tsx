@@ -54,7 +54,7 @@ export default function AdminDashboard() {
     setIsSeeding(true);
     showToast('info', 'Synchronizing institutional database (MSSQL)...');
     try {
-      const response = await fetch('http://localhost:5000/api/admin/seed', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/seed`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('college_auth_token')}`
