@@ -50,6 +50,11 @@ const authenticateToken = (req: any, res: any, next: any) => {
   });
 };
 
+// --- Health Check / Root ---
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'College Event Management API is running', timestamp: new Date().toISOString() });
+});
+
 // --- Connectivity Diagnostics ---
 app.get('/api/ping', (req, res) => {
   console.log('📡 Institutional API: Ping Received');
