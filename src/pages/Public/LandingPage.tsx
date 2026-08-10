@@ -277,11 +277,11 @@ const LandingPage: React.FC = () => {
       {/* Trust Badge Section */}
       <section className="py-12 border-t border-slate-100/50 bg-white/30 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-20">
-          <div className="flex flex-wrap justify-between items-center gap-12 opacity-30 invert grayscale group">
-            <div className="text-3xl font-[900] tracking-tighter opacity-50 hover:opacity-100 transition-opacity"> ENGINEERING COUNCIL </div>
-            <div className="text-3xl font-[900] tracking-tighter opacity-50 hover:opacity-100 transition-opacity"> CULTURAL HUB </div>
-            <div className="text-3xl font-[900] tracking-tighter opacity-50 hover:opacity-100 transition-opacity"> SPORTS PAVILION </div>
-            <div className="text-3xl font-[900] tracking-tighter opacity-50 hover:opacity-100 transition-opacity"> STUDENT GUILD </div>
+          <div className="flex flex-wrap justify-between items-center gap-12 group">
+            <div className="text-3xl font-[900] tracking-tighter text-slate-400 hover:text-slate-900 transition-colors"> ENGINEERING COUNCIL </div>
+            <div className="text-3xl font-[900] tracking-tighter text-slate-400 hover:text-slate-900 transition-colors"> CULTURAL HUB </div>
+            <div className="text-3xl font-[900] tracking-tighter text-slate-400 hover:text-slate-900 transition-colors"> SPORTS PAVILION </div>
+            <div className="text-3xl font-[900] tracking-tighter text-slate-400 hover:text-slate-900 transition-colors"> STUDENT GUILD </div>
           </div>
         </div>
       </section>
