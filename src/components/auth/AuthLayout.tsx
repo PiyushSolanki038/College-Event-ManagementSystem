@@ -93,11 +93,11 @@ const AuthLayout: React.FC = () => {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white w-full max-w-[1024px] min-h-[600px] rounded-[2.5rem] shadow-heavy overflow-hidden flex flex-col md:flex-row relative z-10 border border-white"
+        className="bg-white w-full max-w-[860px] min-h-[480px] rounded-[2rem] shadow-heavy overflow-hidden flex flex-col md:flex-row relative z-10 border border-white"
       >
         
         {/* Left Side: Cinematic Perspective (Persistent) */}
-        <div className="md:w-[50%] relative overflow-hidden bg-black group">
+        <div className="md:w-[42%] relative overflow-hidden bg-black group">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
@@ -107,24 +107,24 @@ const AuthLayout: React.FC = () => {
               transition={{ duration: 1.5, ease: "easeInOut" }}
               className="absolute inset-0"
             >
-              <img 
-                src={carouselContent[activeIndex].image} 
-                alt="" 
+              <img
+                src={carouselContent[activeIndex].image}
+                alt=""
                 className="w-full h-full object-cover grayscale-[30%] brightness-[0.8]"
               />
             </motion.div>
           </AnimatePresence>
 
-          <div className="absolute inset-0 z-20 p-10 lg:p-14 flex flex-col justify-between">
+          <div className="absolute inset-0 z-20 p-6 lg:p-8 flex flex-col justify-between">
             {/* Top Branding - Finexy Aesthetic */}
             <div className="flex justify-between items-center">
-              <Link to="/" className="flex items-center gap-4 group">
-                <div className="w-14 h-14 bg-white/10 backdrop-blur-2xl rounded-[1.2rem] border border-white/20 flex items-center justify-center group-hover:bg-orange-500 transition-all duration-500 shadow-xl shadow-black/20">
-                  <Zap className="w-6 h-6 text-white" />
+              <Link to="/" className="flex items-center gap-3 group">
+                <div className="w-10 h-10 bg-white/10 backdrop-blur-2xl rounded-xl border border-white/20 flex items-center justify-center group-hover:bg-orange-500 transition-all duration-500 shadow-xl shadow-black/20">
+                  <Zap className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white font-[900] text-xl tracking-tight leading-none mb-1">COLLEGE EVENT</span>
-                  <span className="text-white/40 text-[9px] font-black tracking-[0.2em] uppercase">Management System</span>
+                  <span className="text-white font-[900] text-sm tracking-tight leading-none mb-1">COLLEGE EVENT</span>
+                  <span className="text-white/40 text-[8px] font-black tracking-[0.2em] uppercase">Management System</span>
                 </div>
               </Link>
             </div>
@@ -138,20 +138,20 @@ const AuthLayout: React.FC = () => {
                     animate={{ opacity: 0.08, x: 0, filter: "blur(0px)" }}
                     exit={{ opacity: 0, x: 50, filter: "blur(20px)" }}
                     transition={{ duration: 1.2, ease: "easeOut" }}
-                    className="absolute -top-16 -left-8 text-[10rem] font-[900] text-white pointer-events-none select-none tracking-tighter opacity-10 font-['Manrope',sans-serif]"
+                    className="absolute -top-10 -left-4 text-[5.5rem] font-[900] text-white pointer-events-none select-none tracking-tighter opacity-10 font-['Manrope',sans-serif]"
                   >
                     {carouselContent[activeIndex].bigWord}
                   </motion.div>
 
-                  <div className="relative z-10 pt-8">
+                  <div className="relative z-10 pt-4">
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ ...springConfig, delay: 0.2 }}
-                      className="flex items-center gap-4 mb-8"
+                      className="flex items-center gap-3 mb-4"
                     >
-                      <div className="h-[2px] w-12 bg-orange-500"></div>
-                      <span className="text-orange-400 text-[11px] font-black uppercase tracking-[0.4em]">
+                      <div className="h-[2px] w-8 bg-orange-500"></div>
+                      <span className="text-orange-400 text-[10px] font-black uppercase tracking-[0.3em]">
                         {carouselContent[activeIndex].tagline}
                       </span>
                     </motion.div>
@@ -160,30 +160,30 @@ const AuthLayout: React.FC = () => {
                       initial={{ opacity: 0, y: 25 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ ...springConfig, delay: 0.4 }}
-                      className="text-3xl lg:text-4xl font-[900] text-white leading-tight tracking-tight max-w-[380px] font-['Manrope',sans-serif]"
+                      className="text-xl lg:text-2xl font-[900] text-white leading-tight tracking-tight max-w-[300px] font-['Manrope',sans-serif]"
                     >
                       {carouselContent[activeIndex].headline}
                     </motion.h2>
 
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 0.3 }}
                       transition={{ delay: 0.8 }}
-                      className="mt-12 flex items-center gap-2.5"
+                      className="mt-6 flex items-center gap-2.5"
                     >
                        <Globe className="w-3.5 h-3.5 text-white" />
-                       <span className="text-[10px] text-white font-black tracking-widest uppercase">{carouselContent[activeIndex].id}</span>
+                       <span className="text-[9px] text-white font-black tracking-widest uppercase">{carouselContent[activeIndex].id}</span>
                     </motion.div>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               {carouselContent.map((_, i) => (
-                <button 
-                  key={i} 
-                  className={`h-1.5 rounded-full transition-all duration-700 cursor-pointer ${i === activeIndex ? 'w-16 bg-orange-500' : 'w-4 bg-white/20 hover:bg-white/40'}`}
+                <button
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-700 cursor-pointer ${i === activeIndex ? 'w-12 bg-orange-500' : 'w-3 bg-white/20 hover:bg-white/40'}`}
                   onClick={() => setActiveIndex(i)}
                 />
               ))}
@@ -194,39 +194,39 @@ const AuthLayout: React.FC = () => {
         </div>
 
         {/* Right Side: Identity Panel */}
-        <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center relative bg-white">
-          <div className="max-w-[420px] w-full mx-auto">
+        <div className="flex-1 p-6 md:p-8 lg:p-10 flex flex-col justify-center relative bg-white">
+          <div className="max-w-[380px] w-full mx-auto">
             <AnimatePresence mode="wait">
-              <motion.div 
+              <motion.div
                 key={location.pathname}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: [0.16, 0.1, 0.3, 1] }}
               >
-                <div className="mb-8">
-                  <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all font-bold text-xs shadow-sm w-fit active:scale-95">
-                    <ArrowLeft className="w-4 h-4" />
+                <div className="mb-5">
+                  <Link to="/" className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all font-bold text-[11px] shadow-sm w-fit active:scale-95">
+                    <ArrowLeft className="w-3.5 h-3.5" />
                     Return to Platform
                   </Link>
                 </div>
-                
-                <div className="mb-10">
-                  <h1 className="text-3xl lg:text-4xl font-[900] text-black tracking-tight mb-3 leading-none font-['Manrope',sans-serif]">{title}</h1>
-                  <div className="text-slate-400 text-[14px] font-bold">{subHeader}</div>
+
+                <div className="mb-6">
+                  <h1 className="text-2xl lg:text-[28px] font-[900] text-black tracking-tight mb-2 leading-none font-['Manrope',sans-serif]">{title}</h1>
+                  <div className="text-slate-400 text-[13px] font-bold">{subHeader}</div>
                 </div>
-                
+
                 <Outlet />
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-10 left-12 right-12 flex justify-between items-center opacity-30 pointer-events-none hidden lg:flex">
+          <div className="absolute bottom-6 left-8 right-8 flex justify-between items-center opacity-30 pointer-events-none hidden lg:flex">
              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-slate-400" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Registry Secure</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Registry Secure</span>
              </div>
-             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">© 2026 College Event Systems Inc.</span>
+             <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">© 2026 College Event Systems Inc.</span>
           </div>
         </div>
 

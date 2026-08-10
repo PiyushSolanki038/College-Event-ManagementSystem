@@ -68,15 +68,15 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* 🎭 Role Controller */}
-      <div className="relative flex p-1.5 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shadow-inner">
-        <motion.div 
+      <div className="relative flex p-1 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 shadow-inner">
+        <motion.div
           layoutId="role-bg"
-          className="absolute inset-y-1.5 rounded-xl bg-orange-500 shadow-lg shadow-orange-500/20 z-0"
-          animate={{ 
-            left: role === 'student' ? '6px' : role === 'organizer' ? 'calc(33.33% + 4px)' : 'calc(66.66% + 2px)',
-            width: 'calc(33.33% - 8px)'
+          className="absolute inset-y-1 rounded-lg bg-orange-500 shadow-lg shadow-orange-500/20 z-0"
+          animate={{
+            left: role === 'student' ? '4px' : role === 'organizer' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 1px)',
+            width: 'calc(33.33% - 6px)'
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         />
@@ -85,7 +85,7 @@ const Login: React.FC = () => {
             key={r}
             type="button"
             onClick={() => setRole(r)}
-            className={`relative z-10 flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 ${
+            className={`relative z-10 flex-1 py-2 text-[9px] font-black uppercase tracking-widest transition-colors duration-300 ${
               role === r ? 'text-white' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -94,67 +94,67 @@ const Login: React.FC = () => {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-3">
           {/* 📧 Credential: Email */}
           <div className="relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
-                <Mail className={`w-4 h-4 transition-colors duration-300 ${email ? 'text-orange-500' : 'text-slate-300 group-focus-within:text-orange-500'}`} />
+             <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
+                <Mail className={`w-3.5 h-3.5 transition-colors duration-300 ${email ? 'text-orange-500' : 'text-slate-300 group-focus-within:text-orange-500'}`} />
              </div>
              <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="peer w-full pl-11 pr-10 py-4 bg-white border border-slate-100 rounded-2xl text-[14px] font-bold focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 outline-none placeholder-transparent text-black transition-all shadow-sm"
+              className="peer w-full pl-10 pr-9 py-3 bg-white border border-slate-100 rounded-xl text-[13px] font-bold focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 outline-none placeholder-transparent text-black transition-all shadow-sm"
               placeholder="Email"
             />
-            <label className="absolute left-11 top-4 text-slate-400 text-[13px] font-bold pointer-events-none transition-all peer-focus:-top-2.5 peer-focus:left-3 peer-focus:text-[10px] peer-focus:font-black peer-focus:bg-white peer-focus:px-2 peer-focus:text-orange-500 peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:left-3 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-black peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-2">
+            <label className="absolute left-10 top-3 text-slate-400 text-[12px] font-bold pointer-events-none transition-all peer-focus:-top-2 peer-focus:left-2.5 peer-focus:text-[9px] peer-focus:font-black peer-focus:bg-white peer-focus:px-1.5 peer-focus:text-orange-500 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:left-2.5 peer-[:not(:placeholder-shown)]:text-[9px] peer-[:not(:placeholder-shown)]:font-black peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1.5">
               Institutional Email
             </label>
             <AnimatePresence>
               {email.includes('@') && email.includes('.') && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-          
+
           {/* 🔑 Credential: Password */}
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
-                <LockKeyhole className={`w-4 h-4 transition-colors duration-300 ${password ? 'text-orange-500' : 'text-slate-300 group-focus-within:text-orange-500'}`} />
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
+                <LockKeyhole className={`w-3.5 h-3.5 transition-colors duration-300 ${password ? 'text-orange-500' : 'text-slate-300 group-focus-within:text-orange-500'}`} />
              </div>
             <input
               type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="peer w-full pl-11 pr-12 py-4 bg-white border border-slate-100 rounded-2xl text-[14px] font-bold focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 outline-none placeholder-transparent text-black transition-all shadow-sm"
+              className="peer w-full pl-10 pr-11 py-3 bg-white border border-slate-100 rounded-xl text-[13px] font-bold focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 outline-none placeholder-transparent text-black transition-all shadow-sm"
               placeholder="Password"
             />
-            <label className="absolute left-11 top-4 text-slate-400 text-[13px] font-bold pointer-events-none transition-all peer-focus:-top-2.5 peer-focus:left-3 peer-focus:text-[10px] peer-focus:font-black peer-focus:bg-white peer-focus:px-2 peer-focus:text-orange-500 peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:left-3 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-black peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-2">
+            <label className="absolute left-10 top-3 text-slate-400 text-[12px] font-bold pointer-events-none transition-all peer-focus:-top-2 peer-focus:left-2.5 peer-focus:text-[9px] peer-focus:font-black peer-focus:bg-white peer-focus:px-1.5 peer-focus:text-orange-500 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:left-2.5 peer-[:not(:placeholder-shown)]:text-[9px] peer-[:not(:placeholder-shown)]:font-black peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1.5">
               Access Code
             </label>
-            <button 
+            <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-orange-500 transition-colors"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-orange-500 transition-colors"
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             </button>
           </div>
 
           <div className="flex justify-end">
-            <Link 
-              to="/forgot-password" 
-              className="text-[11px] font-black uppercase tracking-widest text-slate-300 hover:text-orange-500 transition-colors"
+            <Link
+              to="/forgot-password"
+              className="text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-orange-500 transition-colors"
             >
               Lost Access?
             </Link>
@@ -165,44 +165,44 @@ const Login: React.FC = () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-5 bg-black text-white font-[900] rounded-2xl hover:bg-orange-500 transition-all shadow-2xl shadow-black/10 flex items-center justify-center gap-3 text-[12px] uppercase tracking-[0.2em] group/btn overflow-hidden relative"
+          className="w-full py-3.5 bg-black text-white font-[900] rounded-xl hover:bg-orange-500 transition-all shadow-2xl shadow-black/10 flex items-center justify-center gap-2.5 text-[11px] uppercase tracking-[0.2em] group/btn overflow-hidden relative"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin opacity-60" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin opacity-60" />
               <span>Verifying Registry…</span>
             </>
           ) : (
             <>
               Authorize Access
-              <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+              <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
             </>
           )}
         </motion.button>
       </form>
 
       {/* 🌐 Social Authentication */}
-      <div className="pt-4">
-        <div className="text-center relative mb-8">
+      <div className="pt-2">
+        <div className="text-center relative mb-5">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-50"></div></div>
-          <span className="relative bg-white px-5 text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Global Identity</span>
+          <span className="relative bg-white px-4 text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Global Identity</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <button 
+        <div className="grid grid-cols-2 gap-3">
+          <button
             type="button"
             onClick={() => { setSocialModal('google'); setSocialEmail(''); setSocialName(''); setSocialError(''); }}
-            className="flex items-center justify-center gap-3 py-3.5 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-900 bg-white hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98] shadow-sm"
+            className="flex items-center justify-center gap-2 py-2.5 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-900 bg-white hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98] shadow-sm"
           >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="Google" />
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-3.5 h-3.5" alt="Google" />
             Google
           </button>
-          <button 
+          <button
             type="button"
             onClick={() => { setSocialModal('apple'); setSocialEmail(''); setSocialName(''); setSocialError(''); }}
-            className="flex items-center justify-center gap-3 py-3.5 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-900 bg-white hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98] shadow-sm"
+            className="flex items-center justify-center gap-2 py-2.5 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-900 bg-white hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98] shadow-sm"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.96.95-2.06 1.95-3.32 1.95s-1.63-.78-3.08-.78c-1.44 0-1.85.75-3.08.78-1.24.03-2.5-.96-3.48-1.95C2.08 18.28 1 15.17 1 12.19c0-3.1 1.98-4.73 3.91-4.73 1.02 0 1.98.54 2.61.54s1.61-.63 2.92-.63c1.02 0 2.45.45 3.32 1.44-2.14 1.25-1.78 4.07.61 5.09-1.32 1.93-2.57 3.55-3.55 4.54l6.23 1.84zM12.03 7.25c-.07-2.34 1.92-4.32 4.31-4.25.07 2.34-1.92 4.32-4.31 4.25z"/></svg>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.96.95-2.06 1.95-3.32 1.95s-1.63-.78-3.08-.78c-1.44 0-1.85.75-3.08.78-1.24.03-2.5-.96-3.48-1.95C2.08 18.28 1 15.17 1 12.19c0-3.1 1.98-4.73 3.91-4.73 1.02 0 1.98.54 2.61.54s1.61-.63 2.92-.63c1.02 0 2.45.45 3.32 1.44-2.14 1.25-1.78 4.07.61 5.09-1.32 1.93-2.57 3.55-3.55 4.54l6.23 1.84zM12.03 7.25c-.07-2.34 1.92-4.32 4.31-4.25.07 2.34-1.92 4.32-4.31 4.25z"/></svg>
             Apple
           </button>
         </div>
