@@ -1,3 +1,5 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Phone, Clock, Plus, Minus, Loader2, Send } from 'lucide-react';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
