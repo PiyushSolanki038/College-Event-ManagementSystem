@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -9,6 +11,8 @@ import QRCode from 'qrcode';
 import {
   sendWelcomeEmail, sendRegistrationEmail, sendTicketEmail,
   sendCertificateEmail, sendEventCancelledEmail,
+  sendEventSubmittedEmail, sendEventApprovedEmail, sendEventRejectedEmail,
+  sendNewRegistrationToOrganizer, sendCertificateToOrganizer,
   sendNewEventToAdmin, sendNewUserToAdmin,
   sendPasswordResetEmail, sendSignupOtpEmail,
   sendContactConfirmationEmail, sendContactInquiryToAdmin,
@@ -20,7 +24,14 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'institutional_governance_secret_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error('❌ FATAL: JWT_SECRET environment variable is not set. Refusing to start with an insecure default.');
+  process.exit(1);
+}
+
+app.use(helmet());
 
 const allowedOrigins = [process.env.FRONTEND_URL, 'https://college-event-management-system-pul.vercel.app', 'http://localhost:5173', 'http://localhost:3000'].filter(Boolean);
 app.use(cors({
@@ -35,6 +46,23 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// --- Rate Limiters (brute-force / abuse protection) ---
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many attempts. Please try again later.' }
+});
+
+const otpLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many verification requests. Please try again later.' }
+});
 
 // --- Authentication Middleware ---
 const authenticateToken = (req: any, res: any, next: any) => {
@@ -172,8 +200,23 @@ app.post('/api/communicate/broadcast', authenticateToken, async (req, res) => {
 });
 
 // --- Auth Endpoints ---
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
   const { email, name, role, password } = req.body;
+
+  if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ message: 'A valid email is required' });
+  }
+  if (!name || typeof name !== 'string' || name.trim().length < 2) {
+    return res.status(400).json({ message: 'Name must be at least 2 characters' });
+  }
+  if (!password || typeof password !== 'string' || password.length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+  }
+  // Only students may self-register; organizer/admin accounts must be provisioned by an admin.
+  if (role && role !== 'student') {
+    return res.status(403).json({ message: 'Only student accounts can be self-registered' });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
@@ -183,7 +226,7 @@ app.post('/api/auth/register', async (req, res) => {
         profile: {
           create: {
             name,
-            role: role || 'student',
+            role: 'student',
             status: 'active'
           }
         }
@@ -191,13 +234,13 @@ app.post('/api/auth/register', async (req, res) => {
       include: { profile: true }
     });
 
-    const token = jwt.sign({ 
-      id: user.profile?.id, 
-      email: user.email, 
-      role: user.profile?.role 
+    const token = jwt.sign({
+      id: user.profile?.id,
+      email: user.email,
+      role: user.profile?.role
     }, JWT_SECRET, { expiresIn: '24h' });
 
-    res.status(201).json({ 
+    res.status(201).json({
       token,
       user: {
         id: user.profile?.id,
@@ -224,52 +267,37 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', authLimiter, async (req, res) => {
   const { email, role: requestedRole, password } = req.body;
+
+  if (!email || !password || !requestedRole) {
+    return res.status(400).json({ message: 'Email, password and role are required' });
+  }
+
   try {
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
       include: { profile: true }
     });
 
-    if (user) {
-      // 1. Verify Password
-      const isPasswordValid = await bcrypt.compare(password || '', user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
-      // 2. Strict Role Validation
-      if (user.profile?.role !== requestedRole) {
-        return res.status(401).json({ 
-          message: `Access denied. Your account is registered as ${user.profile?.role.toUpperCase()}, but you selected ${requestedRole.toUpperCase()}.` 
-        });
-      }
-    } else {
-      // Auto-provisioning logic (demo/institutional bootstrap)
-      // Only allow if default password is used
-      if (password !== 'Password@123') {
-        return res.status(401).json({ message: 'Account not found or invalid bootstrap password' });
-      }
+    // 1. Verify Password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
-      const hashedPassword = await bcrypt.hash('Password@123', 10);
-      user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          profile: {
-            create: {
-              name: email.split('@')[0],
-              role: requestedRole || 'student',
-              status: 'active'
-            }
-          }
-        },
-        include: { profile: true }
+    // 2. Strict Role Validation
+    if (user.profile?.role !== requestedRole) {
+      return res.status(401).json({
+        message: `Access denied. Your account is registered as ${user.profile?.role.toUpperCase()}, but you selected ${requestedRole.toUpperCase()}.`
       });
     }
 
-    const token = jwt.sign({ 
+    const token = jwt.sign({
       id: user.profile?.id, 
       email: user.email, 
       role: user.profile?.role 
@@ -342,7 +370,7 @@ app.patch('/api/auth/profile', authenticateToken, async (req: any, res) => {
 });
 
 // --- Forgot Password ---
-app.post('/api/auth/forgot-password', async (req, res) => {
+app.post('/api/auth/forgot-password', otpLimiter, async (req, res) => {
   const { email } = req.body;
   try {
     const user = await prisma.user.findUnique({
@@ -414,7 +442,7 @@ app.post('/api/contact', async (req, res) => {
 // --- Email Verification (Post-Registration OTP) ---
 const verifyOtpStore = new Map<string, { otp: string; expires: number }>();
 
-app.post('/api/auth/send-verification', authenticateToken, async (req: any, res) => {
+app.post('/api/auth/send-verification', authenticateToken, otpLimiter, async (req: any, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -538,7 +566,10 @@ app.delete('/api/venues/:id', authenticateToken, async (req: any, res) => {
     try {
         await prisma.venue.delete({ where: { id: parseInt(id) } });
         res.json({ message: 'Venue deleted' });
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 'P2003') {
+          return res.status(409).json({ message: 'This venue is still referenced by existing events and cannot be deleted' });
+        }
         res.status(400).json({ message: 'Venue deletion failed' });
     }
 });
@@ -624,25 +655,41 @@ app.post('/api/events', authenticateToken, async (req: any, res) => {
   }
 });
 
-app.patch('/api/events/:id', authenticateToken, async (req, res) => {
+app.patch('/api/events/:id', authenticateToken, async (req: any, res) => {
   const { id } = req.params;
-  const updates = { ...req.body };
-  const oldStatus = updates._oldStatus; // frontend can pass this for status change detection
-  
-  // Clean payload: Remove primary keys and handle type casting
-  delete updates.id;
-  delete updates.registeredCount;
-  delete updates._oldStatus;
-  
+  const eventId = parseInt(id);
+  if (isNaN(eventId)) return res.status(400).json({ message: 'Invalid event id' });
+
   try {
-    const data: any = { ...updates };
-    
+    const existing = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!existing) return res.status(404).json({ message: 'Event not found' });
+
+    const requester = await prisma.profile.findUnique({ where: { id: req.user.id } });
+    if (!requester) return res.status(403).json({ message: 'Unauthorized' });
+
+    const isAdmin = requester.role === 'admin';
+    const isOwner = requester.role === 'organizer' && existing.organizerId === requester.id;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: 'You do not have permission to modify this event' });
+    }
+
+    // Whitelist editable fields. Only admins may change status/organizer/rejectionReason.
+    const editableByOwner = ['title', 'description', 'date', 'time', 'venueId', 'categoryId', 'maxCapacity', 'price', 'targetAudience', 'contactEmail', 'contactPhone', 'websiteUrl', 'bannerImage', 'certificateEnabled'];
+    const editableByAdminOnly = ['status', 'organizerId', 'rejectionReason'];
+    const allowedFields = isAdmin ? [...editableByOwner, ...editableByAdminOnly] : editableByOwner;
+
+    const data: any = {};
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) data[field] = req.body[field];
+    }
+
     if (data.date) data.date = new Date(data.date);
     if (data.venueId) data.venueId = parseInt(data.venueId);
     if (data.categoryId) data.categoryId = parseInt(data.categoryId);
     if (data.maxCapacity) data.maxCapacity = parseInt(data.maxCapacity);
     if (data.price) data.price = parseFloat(data.price);
     if (data.organizerId) data.organizerId = parseInt(data.organizerId);
+    if (data.certificateEnabled !== undefined) data.certificateEnabled = data.certificateEnabled === true || data.certificateEnabled === 'true';
 
     const event = await prisma.event.update({
       where: { id: parseInt(id) },
@@ -683,10 +730,23 @@ app.patch('/api/events/:id', authenticateToken, async (req, res) => {
   }
 });
 
-app.delete('/api/events/:id', authenticateToken, async (req, res) => {
+app.delete('/api/events/:id', authenticateToken, async (req: any, res) => {
   const { id } = req.params;
+  const eventId = parseInt(id);
+  if (isNaN(eventId)) return res.status(400).json({ message: 'Invalid event id' });
+
   try {
-    await prisma.event.delete({ where: { id: parseInt(id) } });
+    const existing = await prisma.event.findUnique({ where: { id: eventId } });
+    if (!existing) return res.status(404).json({ message: 'Event not found' });
+
+    const requester = await prisma.profile.findUnique({ where: { id: req.user.id } });
+    const isAdmin = requester?.role === 'admin';
+    const isOwner = requester?.role === 'organizer' && existing.organizerId === requester.id;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: 'You do not have permission to delete this event' });
+    }
+
+    await prisma.event.delete({ where: { id: eventId } });
     res.json({ message: 'Event purged' });
   } catch (error) {
     res.status(400).json({ message: 'Delete failed' });
@@ -704,12 +764,22 @@ app.get('/api/registrations', authenticateToken, async (req: any, res) => {
 app.post('/api/registrations', authenticateToken, async (req: any, res) => {
   const { eventId, attendeeName, attendeeGender, attendeeContact, attendeeEmail } = req.body;
   const userId = req.user.id;
+  const parsedEventId = parseInt(eventId);
+  if (isNaN(parsedEventId)) return res.status(400).json({ message: 'Invalid event id' });
+
   try {
     const registration = await prisma.$transaction(async (tx) => {
+      const event = await tx.event.findUnique({ where: { id: parsedEventId } });
+      if (!event) throw new Error('EVENT_NOT_FOUND');
+      if (event.status !== 'approved') throw new Error('EVENT_NOT_OPEN');
+      if (event.maxCapacity > 0 && event.registeredCount >= event.maxCapacity) {
+        throw new Error('EVENT_FULL');
+      }
+
       const reg = await tx.registration.create({
-        data: { 
-          userId, 
-          eventId: parseInt(eventId),
+        data: {
+          userId,
+          eventId: parsedEventId,
           attendeeName: attendeeName || null,
           attendeeGender: attendeeGender || null,
           attendeeContact: attendeeContact || null,
@@ -717,7 +787,7 @@ app.post('/api/registrations', authenticateToken, async (req: any, res) => {
         }
       });
       await tx.event.update({
-        where: { id: parseInt(eventId) },
+        where: { id: parsedEventId },
         data: { registeredCount: { increment: 1 } }
       });
       return reg;
@@ -726,7 +796,7 @@ app.post('/api/registrations', authenticateToken, async (req: any, res) => {
 
     // Fetch event + organizer for email context
     const event = await prisma.event.findUnique({
-      where: { id: parseInt(eventId) },
+      where: { id: parsedEventId },
       include: { venue: true, organizer: { include: { user: true } } }
     });
 
@@ -751,7 +821,12 @@ app.post('/api/registrations', authenticateToken, async (req: any, res) => {
       }
     }
 
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'EVENT_NOT_FOUND') return res.status(404).json({ message: 'Event not found' });
+    if (error.message === 'EVENT_NOT_OPEN') return res.status(400).json({ message: 'This event is not open for registration' });
+    if (error.message === 'EVENT_FULL') return res.status(409).json({ message: 'This event has reached maximum capacity' });
+    if (error.code === 'P2002') return res.status(409).json({ message: 'You are already registered for this event' });
+    console.error('❌ Registration error:', error);
     res.status(400).json({ message: 'Registration failed' });
   }
 });
@@ -875,9 +950,16 @@ app.get('/api/registrations/:registrationId/ticket', authenticateToken, async (r
     });
 
     if (!registration) return res.status(404).json({ message: 'Registration not found' });
-    
-    // Note: In a stricter system, you'd check if registration.user.userId === userId
-    // But for this demo, we'll allow fetching if the ID exists.
+
+    // Only the registrant, or an organizer/admin, may download this ticket.
+    // Note: registration.userId references Profile.id (same space as req.user.id from the JWT).
+    if (registration.userId !== userId) {
+      const requester = await prisma.profile.findUnique({ where: { id: userId } });
+      const isPrivileged = requester && (requester.role === 'admin' || requester.role === 'organizer');
+      if (!isPrivileged) {
+        return res.status(403).json({ message: 'You do not have permission to access this ticket' });
+      }
+    }
 
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const filename = `Ticket-${registration.id}.pdf`;
