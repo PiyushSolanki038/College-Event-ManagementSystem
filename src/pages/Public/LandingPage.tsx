@@ -494,7 +494,7 @@ const LandingPage: React.FC = () => {
                transition={{ delay: 0.1 }}
                className="relative z-10 text-center flex flex-col items-center group"
             >
-               <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-sm font-[900] text-slate-500 mb-8 shadow-sm group-hover:text-[#006D5B] group-hover:border-[#006D5B]/30 transition-all duration-500">01</div>
+               <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-[900] text-slate-700 mb-8 shadow-sm group-hover:text-white group-hover:bg-[#006D5B] group-hover:border-[#006D5B] transition-all duration-500">01</div>
                <h4 className="text-sm font-[900] text-[#001D19] mb-3 uppercase tracking-[0.1em]">Register Account</h4>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">Institutional <br/> Onboarding</p>
             </motion.div>
@@ -507,7 +507,7 @@ const LandingPage: React.FC = () => {
                transition={{ delay: 0.2 }}
                className="relative z-10 text-center flex flex-col items-center group"
             >
-               <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-sm font-[900] text-slate-500 mb-8 shadow-sm group-hover:text-[#006D5B] group-hover:border-[#006D5B]/30 transition-all duration-500">02</div>
+               <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-[900] text-slate-700 mb-8 shadow-sm group-hover:text-white group-hover:bg-[#006D5B] group-hover:border-[#006D5B] transition-all duration-500">02</div>
                <h4 className="text-sm font-[900] text-[#001D19] mb-3 uppercase tracking-[0.1em]">Discovery events</h4>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">Smart <br/> Filtering Feed</p>
             </motion.div>
@@ -536,7 +536,7 @@ const LandingPage: React.FC = () => {
                transition={{ delay: 0.4 }}
                className="relative z-10 text-center flex flex-col items-center group"
             >
-               <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-sm font-[900] text-slate-500 mb-8 shadow-sm group-hover:text-[#006D5B] group-hover:border-[#006D5B]/30 transition-all duration-500">04</div>
+               <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-[900] text-slate-700 mb-8 shadow-sm group-hover:text-white group-hover:bg-[#006D5B] group-hover:border-[#006D5B] transition-all duration-500">04</div>
                <h4 className="text-sm font-[900] text-[#001D19] mb-3 uppercase tracking-[0.1em]">Attend & Pulse</h4>
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">Live <br/> Participation</p>
             </motion.div>
